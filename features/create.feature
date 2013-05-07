@@ -32,4 +32,12 @@ Feature: Creating a resource
         }
       """
 
-    And the `all` method should return an array containing a single article responding to methods that correspond to the JSON properties
+    And the `all` method should return the equivalent of:
+    """
+      [
+        Article.new(
+          id: 1,
+          title: "foo"
+        )
+      ]
+    """

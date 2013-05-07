@@ -20,10 +20,34 @@ module AwesomeResource
   end
 
   def initialize(attributes={})
+    attributes.keys.each do |key|
+      attributes[key.to_s] = attributes.delete key if key != key.to_s
+    end
+
     @attributes = attributes
   end
 
   def method_missing(method_name, *args, &block)
-    @attributes[method_name.to_s]
+    method_name = method_name.to_s
+
+    if attributes.has_key?(method_name)
+      attributes[method_name]
+    else
+      super
+    end
+  end
+
+  def respond_to?(method_name)
+    attributes.has_key?(method_name.to_s) || super
+  end
+
+  def ==(other_resource)
+    attributes.keys.all? do |key|
+      other_resource.respond_to?(key) && other_resource.send(key) == send(key)
+    end
+  end
+
+  def attributes
+    @attributes
   end
 end
