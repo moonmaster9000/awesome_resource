@@ -8,28 +8,39 @@ module AwesomeResource
 
   module ClassMethods
     def create(attributes={})
-      RestClient.post("http://localhost:3001/#{self.name.underscore.pluralize}", JSON.generate(self.name.underscore => attributes), "Content-Type" => "application/json")
+      RestClient.post(collection_endpoint, JSON.generate(resource_name => attributes), "Content-Type" => "application/json")
+    end
+
+    def collection_endpoint
+      "#{site}#{collection_name}"
+    end
+
+    def collection_name
+      resource_name.pluralize
+    end
+
+    def resource_name
+      self.name.underscore
+    end
+
+    def site
+      "http://localhost:3001/"
     end
 
     def all
-      response = RestClient.get("http://localhost:3001/#{self.name.underscore.pluralize}", "ContentType" => "application/json")
-      JSON.parse(response)[self.name.underscore.pluralize].map do |resource|
+      response = RestClient.get(collection_endpoint, "ContentType" => "application/json")
+
+      JSON.parse(response)[collection_name].map do |resource|
         new(resource)
       end
     end
   end
 
   def initialize(attributes={})
-    attributes.keys.each do |key|
-      attributes[key.to_s] = attributes.delete key if key != key.to_s
-    end
-
-    @attributes = attributes
+    @attributes = AwesomeResource::Attributes.new(attributes)
   end
 
   def method_missing(method_name, *args, &block)
-    method_name = method_name.to_s
-
     if attributes.has_key?(method_name)
       attributes[method_name]
     else
@@ -38,16 +49,53 @@ module AwesomeResource
   end
 
   def respond_to?(method_name)
-    attributes.has_key?(method_name.to_s) || super
+    attributes.has_key?(method_name) || super
   end
 
   def ==(other_resource)
     attributes.keys.all? do |key|
-      other_resource.respond_to?(key) && other_resource.send(key) == send(key)
+      other_resource.attributes.has_key?(key) && other_resource.send(key) == send(key)
     end
   end
 
   def attributes
-    @attributes
+    @attributes.to_hash
+  end
+
+  class Attributes
+    def initialize(attributes)
+      @attributes = standardize_keys! attributes
+    end
+
+    def [](key)
+      attributes[standardized_key(key)]
+    end
+
+    def keys
+      attributes.keys
+    end
+
+    def has_key?(key)
+      attributes.has_key?(standardized_key(key))
+    end
+
+    def to_hash
+      attributes
+    end
+
+    private
+    attr_reader :attributes
+
+    def standardized_key(key)
+      key.to_sym
+    end
+
+    def standardize_keys!(hash)
+      hash.keys.each do |key|
+        hash[standardized_key(key)] = hash.delete(key) if key != standardized_key(key)
+      end
+
+      hash
+    end
   end
 end

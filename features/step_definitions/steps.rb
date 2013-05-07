@@ -1,7 +1,7 @@
 Given /^a rails site exists accepting posts at "([^"]*)"$/ do |endpoint|
 end
 
-When /^I call create on an Article model:$/ do |code|
+When /^I call `create` on an Article model:$/ do |code|
   sleep 5; eval code
 end
 

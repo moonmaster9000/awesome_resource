@@ -3,7 +3,7 @@ Feature: Creating a resource
   Scenario: Endpoint responds with 201
     Given a rails site exists accepting posts at "http://localhost:3001/articles"
 
-    When I call create on an Article model:
+    When I call `create` on an Article model:
       """
         Article.create title: "foo"
       """
