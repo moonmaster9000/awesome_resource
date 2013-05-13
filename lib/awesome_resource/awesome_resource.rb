@@ -36,9 +36,9 @@ module AwesomeResource
     end
 
     def all
-      response = RestClient.get(collection_endpoint, "ContentType" => "application/json")
+      response = AwesomeResource.client.get(collection_endpoint)
 
-      JSON.parse(response)[collection_name].map do |resource|
+      response.payload[collection_name].map do |resource|
         new(resource)
       end
     end

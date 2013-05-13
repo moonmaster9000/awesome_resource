@@ -20,6 +20,15 @@ module AwesomeResource
           )
         end
       end
+
+      def get(location)
+        response = RestClient.get(location, "Content-Type" => "application/json")
+
+        Response.new(
+          response_code: response.code,
+          payload: JSON.parse(response)
+        )
+      end
     end
   end
 end
