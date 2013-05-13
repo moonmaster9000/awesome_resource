@@ -20,6 +20,8 @@ VCR.configure do |c|
     Interactions.interactions[request.method] ||= []
     Interactions.interactions[request.method] << {request: request, response: response}
   end
+
+  c.allow_http_connections_when_no_cassette = true
 end
 
 Before do |scenario|
