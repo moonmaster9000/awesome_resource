@@ -5,6 +5,10 @@ class ArticlesController < ApplicationController
     respond_with Article.all
   end
 
+  def show
+    respond_with Article.find(params[:id])
+  end
+
   def create
     respond_with Article.create(params[:article])
   end

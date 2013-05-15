@@ -48,3 +48,22 @@ end
 When(/^the `create` method should return an instance of article with that error:$/) do |code|
   eval code
 end
+
+Given(/^an article resource exists at "http:\/\/localhost:3001\/articles\/1"$/) do
+  Article.create(title: "foo")
+end
+
+When(/^I call \`Article.find\(1\)\`$/) do
+  @result = Article.find(1)
+end
+
+When(/^the server returns a (\d+) response with the following payload:$/) do |status_code, payload|
+  gets.should include_interaction(
+    response_status: status_code,
+    response_body: payload
+  )
+end
+
+Then(/^the find method should return a resource equivalent to the following:$/) do |code|
+  @result.should == eval(code)
+end

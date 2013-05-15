@@ -18,6 +18,28 @@ describe AwesomeResource do
     end
   end
 
+  describe '.find' do
+    subject { Article.find(1).attributes }
+
+    before do
+      AwesomeResource.client.stub(:get).and_return(
+        AwesomeResource::Client::Response.new(
+          response_code: response_code,
+          payload: payload
+        )
+      )
+    end
+
+    context "the http client returns a 200 response with a payload" do
+      let(:response_code) { 200 }
+      let(:payload) do { "article" => { "title" => "foo" } } end
+
+      it "returns an instance of the model with the payload's attributes" do
+        should == { "title" => "foo" }
+      end
+    end
+  end
+
   describe 'attributes' do
     it "responds to attributes regardless of whether they are created with string or symbol keys" do
       Article.new("foo" => "bar").foo.should == "bar"

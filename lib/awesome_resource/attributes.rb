@@ -27,7 +27,7 @@ module AwesomeResource
     attr_reader :attributes
 
     def standardized_key(key)
-      key.to_sym
+      key.to_s
     end
 
     def standardize_keys!(hash)

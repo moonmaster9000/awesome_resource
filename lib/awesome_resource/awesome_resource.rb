@@ -1,7 +1,6 @@
 require 'awesome_resource/attributes'
 require 'awesome_resource/client'
 require "active_support/core_ext/string/inflections"
-require "rest_client"
 require "json"
 
 module AwesomeResource
@@ -19,8 +18,17 @@ module AwesomeResource
       new(response.payload)
     end
 
+    def find(id)
+      response = AwesomeResource.client.get(resource_endpoint(id))
+      new(response.payload[resource_name])
+    end
+
     def collection_endpoint
       "#{site}#{collection_name}"
+    end
+
+    def resource_endpoint(id)
+      "#{collection_endpoint}/#{id}"
     end
 
     def collection_name
@@ -57,15 +65,15 @@ module AwesomeResource
   end
 
   def method_missing(method_name, *args, &block)
-    if attributes.has_key?(method_name)
-      attributes[method_name]
+    if awesome_attributes.has_key?(method_name)
+      awesome_attributes[method_name]
     else
       super
     end
   end
 
   def respond_to?(method_name)
-    attributes.has_key?(method_name) || super
+    awesome_attributes.has_key?(method_name) || super
   end
 
   def ==(other_resource)
@@ -76,5 +84,10 @@ module AwesomeResource
 
   def attributes
     @attributes.to_hash
+  end
+
+  private
+  def awesome_attributes
+    @attributes
   end
 end
