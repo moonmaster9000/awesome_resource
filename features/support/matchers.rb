@@ -5,7 +5,11 @@ RSpec::Matchers.define :include_interaction do |expected_interaction|
   expected_interaction[:request_body] = JSON.parse(expected_interaction[:request_body]) if expected_interaction[:request_body]
 
   def jsonify(content)
-    JSON.parse(content) if !content.nil? && content != ""
+    begin
+      JSON.parse(content) if !content.nil? && content != ""
+    rescue JSON::ParserError => e
+      e.to_s
+    end
   end
 
   match do |http_interactions|

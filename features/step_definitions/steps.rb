@@ -53,8 +53,12 @@ Given(/^an article resource exists at "http:\/\/localhost:3001\/articles\/1"$/) 
   Article.create(title: "foo")
 end
 
-When(/^I call \`Article.find\(1\)\`$/) do
-  @result = Article.find(1)
+When(/^I call \`(.*)`$/) do |code|
+  @result = begin
+    eval code
+  rescue Exception => e
+    e
+  end
 end
 
 When(/^the server returns a (\d+) response with the following payload:$/) do |status_code, payload|
@@ -66,4 +70,15 @@ end
 
 Then(/^the find method should return a resource equivalent to the following:$/) do |code|
   @result.should == eval(code)
+end
+
+When(/^the server returns a (\d+) response from a GET request to "(.*)"$/) do |status, endpoint|
+  gets.should include_interaction(
+    response_status: status,
+    endpoint: endpoint
+  )
+end
+
+Then(/^the find method should raise an AwesomeResource::NotFound exception$/) do
+  @result.class.should == AwesomeResource::NotFound
 end

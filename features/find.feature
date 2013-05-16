@@ -23,3 +23,10 @@ Feature: Finding a resource
           title: "foo"
         )
       """
+
+  Scenario: Resource does not exist on server
+    When I call `Article.find(1)`
+
+    And the server returns a 404 response from a GET request to "http://localhost:3001/articles/1"
+
+    Then the find method should raise an AwesomeResource::NotFound exception

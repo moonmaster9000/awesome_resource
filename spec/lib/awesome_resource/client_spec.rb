@@ -20,5 +20,21 @@ module AwesomeResource
         end
       end
     end
+
+    describe ".find" do
+      context "when the server returns a 404" do
+        WebMock.stub_request(:get, 'www.example.com').to_return(
+          status: 404
+        )
+
+        it "raises an AwesomeResource::NotFound exception" do
+          expect {
+            Client.get(
+              "http://www.example.com"
+            )
+          }.to raise_exception(AwesomeResource::NotFound)
+        end
+      end
+    end
   end
 end
