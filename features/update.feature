@@ -22,3 +22,18 @@ Feature: Update a resource
       """
 
     And the server should return a 204 response to the PUT to "http://localhost:3001/articles/1"
+
+
+  Scenario: Resource does not exist
+
+    Given there are no articles on the server
+
+    When I update the article:
+      """
+        article = Article.new id: 1, title: "new title!"
+        article.save
+      """
+
+    And the server returns a 404 response from a PUT request to "http://localhost:3001/articles/1"
+
+    Then the save method should raise an AwesomeResource::NotFound exception

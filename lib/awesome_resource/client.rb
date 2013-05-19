@@ -9,49 +9,39 @@ module AwesomeResource
   class Client
     class << self
       def post(location: location, body: body)
-        begin
-          response = RestClient.post(location, JSON.generate(body), "Content-Type" => "application/json")
-
-          Response.new(
-            status: response.code,
-            body: JSON.parse(response)
-          )
-        rescue RestClient::Exception => e
-          Response.new(
-            status: e.http_code,
-            body: JSON.parse(e.http_body)
-          )
-        end
+        request method: :post, location: location, body: body
       end
 
       def put(location: location, body: body)
+        request method: :put, location: location, body: body
+      end
+
+      def get(location)
+        request method: :get, location: location
+      end
+
+      private
+      def request(method: method, location: location, body: nil)
         begin
-          response = RestClient.put(location, JSON.generate(body), "Content-Type" => "application/json")
+          if body
+            response = RestClient.send(method, location, JSON.generate(body), "Content-Type" => "application/json")
+          else
+            response = RestClient.send(method, location, "Content-Type" => "application/json")
+          end
 
           Response.new(
             status: response.code,
             body: response.blank? ? nil: JSON.parse(response)
           )
 
-        rescue RestClient::Exception => e
+        rescue RestClient::ResourceNotFound
+          raise AwesomeResource::NotFound
+
+        rescue RestClient::UnprocessableEntity => e
           Response.new(
             status: e.http_code,
             body: JSON.parse(e.http_body)
           )
-        end
-      end
-
-      def get(location)
-        begin
-          response = RestClient.get(location, "Content-Type" => "application/json")
-
-          Response.new(
-            status: response.code,
-            body: JSON.parse(response)
-          )
-
-        rescue RestClient::ResourceNotFound
-          raise AwesomeResource::NotFound
         end
       end
     end

@@ -70,8 +70,26 @@ module AwesomeResource
             body: {}
           )
 
-          put.body.should        == {"errors" => "are bad"}
+          put.body.should    == {"errors" => "are bad"}
           put.status.should  == 422
+        end
+      end
+
+      context "when the server returns a 404" do
+        before do
+          WebMock.stub_request(:put, 'www.example.com').to_return(
+            status: 404,
+            body: nil
+          )
+        end
+
+        it "should raise an AwesomeResource::NotFound exception" do
+          expect {
+            Client.put(
+              location: "http://www.example.com",
+              body: {}
+            )
+          }.to raise_exception AwesomeResource::NotFound
         end
       end
     end

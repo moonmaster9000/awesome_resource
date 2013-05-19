@@ -84,7 +84,11 @@ Then(/^the find method should raise an AwesomeResource::NotFound exception$/) do
 end
 
 When(/^I update the article:$/) do |code|
-  eval code
+  @result = begin
+    eval code
+  rescue Exception => e
+    e
+  end
 end
 
 Then(/^AwesomeResource should PUT the following body to "(.*)"$/) do |endpoint, body|
@@ -99,4 +103,18 @@ When(/^the server should return a (\d+) response to the PUT to "(.*)"$/) do |sta
     endpoint: endpoint,
     status: status_code
   )
+end
+
+When(/^the server returns a (\d+) response from a PUT request to "(.*)"$/) do |status, endpoint|
+  puts.should include_interaction(
+    endpoint: endpoint,
+    status: status
+  )
+end
+
+Then(/^the save method should raise an AwesomeResource::NotFound exception$/) do
+  @result.class.should == AwesomeResource::NotFound
+end
+
+Given(/^there are no articles on the server$/) do
 end
