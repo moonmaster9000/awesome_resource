@@ -18,7 +18,7 @@ module AwesomeResource
     end
 
     def find(id)
-      response = AwesomeResource.client.get(resource_endpoint(id))
+      response = AwesomeResource.client.get(location: resource_endpoint(id))
       new(response.body[resource_name])
     end
 
@@ -43,7 +43,7 @@ module AwesomeResource
     end
 
     def all
-      response = AwesomeResource.client.get(collection_endpoint)
+      response = AwesomeResource.client.get(location: collection_endpoint)
 
       response.body[collection_name].map do |resource|
         new(resource)

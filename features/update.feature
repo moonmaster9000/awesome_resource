@@ -36,4 +36,4 @@ Feature: Update a resource
 
     And the server returns a 404 response from a PUT request to "http://localhost:3001/articles/1"
 
-    Then the save method should raise an AwesomeResource::NotFound exception
+    Then the save method should raise an AwesomeResource::ResourceNotFound exception

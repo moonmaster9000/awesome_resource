@@ -79,8 +79,8 @@ When(/^the server returns a (\d+) response from a GET request to "(.*)"$/) do |s
   )
 end
 
-Then(/^the find method should raise an AwesomeResource::NotFound exception$/) do
-  @result.class.should == AwesomeResource::NotFound
+Then(/^the find method should raise an AwesomeResource::ResourceNotFound exception$/) do
+  @result.class.should == AwesomeResource::ResourceNotFound
 end
 
 When(/^I update the article:$/) do |code|
@@ -112,8 +112,8 @@ When(/^the server returns a (\d+) response from a PUT request to "(.*)"$/) do |s
   )
 end
 
-Then(/^the save method should raise an AwesomeResource::NotFound exception$/) do
-  @result.class.should == AwesomeResource::NotFound
+Then(/^the save method should raise an AwesomeResource::ResourceNotFound exception$/) do
+  @result.class.should == AwesomeResource::ResourceNotFound
 end
 
 Given(/^there are no articles on the server$/) do

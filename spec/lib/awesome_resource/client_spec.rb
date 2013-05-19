@@ -3,6 +3,33 @@ require "webmock"
 
 module AwesomeResource
   describe Client do
+    shared_examples_for "Unrecoverable Errors" do
+      before do
+        WebMock.stub_request(method, 'www.example.com').to_return(
+          status: status,
+          body: nil
+        )
+      end
+
+      subject {
+        begin
+          arguments = { location: "http://www.example.com" }
+          arguments = arguments.merge(body: {}) unless method == :get
+          Client.send(method, arguments)
+        rescue Exception => e
+          e
+        end.class
+      }
+
+      AwesomeResource::EXCEPTION_CODES.keys.each do |code|
+        context "#{code} error" do
+          let(:status) { code }
+
+          it { should == AwesomeResource::EXCEPTIONS[code] }
+        end
+      end
+    end
+
     describe ".post" do
       context "when the server returns a 422 with an errors object literal" do
         before do
@@ -19,23 +46,18 @@ module AwesomeResource
           ).body.should == {"errors" => {"foo" => ["bar"]}}
         end
       end
+
+      context "the server responds with any other response code" do
+        let(:method) { :post }
+        it_behaves_like "Unrecoverable Errors"
+      end
+
     end
 
     describe ".get" do
-      context "when the server returns a 404" do
-        before do
-          WebMock.stub_request(:get, 'www.example.com').to_return(
-            status: 404
-          )
-        end
-
-        it "raises an AwesomeResource::NotFound exception" do
-          expect {
-            Client.get(
-              "http://www.example.com"
-            )
-          }.to raise_exception(AwesomeResource::NotFound)
-        end
+      context "the server responds with any other response code" do
+        let(:method) { :get }
+        it_behaves_like "Unrecoverable Errors"
       end
     end
 
@@ -70,27 +92,14 @@ module AwesomeResource
             body: {}
           )
 
-          put.body.should    == {"errors" => "are bad"}
-          put.status.should  == 422
+          put.body.should == {"errors" => "are bad"}
+          put.status.should == 422
         end
       end
 
-      context "when the server returns a 404" do
-        before do
-          WebMock.stub_request(:put, 'www.example.com').to_return(
-            status: 404,
-            body: nil
-          )
-        end
-
-        it "should raise an AwesomeResource::NotFound exception" do
-          expect {
-            Client.put(
-              location: "http://www.example.com",
-              body: {}
-            )
-          }.to raise_exception AwesomeResource::NotFound
-        end
+      context "the server responds with any other response code" do
+        let(:method) { :put }
+        it_behaves_like "Unrecoverable Errors"
       end
     end
   end

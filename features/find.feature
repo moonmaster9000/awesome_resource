@@ -29,4 +29,4 @@ Feature: Finding a resource
 
     And the server returns a 404 response from a GET request to "http://localhost:3001/articles/1"
 
-    Then the find method should raise an AwesomeResource::NotFound exception
+    Then the find method should raise an AwesomeResource::ResourceNotFound exception
