@@ -7,6 +7,10 @@ module Helpers
     interactions[:post] ||= []
   end
 
+  def puts
+    interactions[:put] ||= []
+  end
+
   def interactions
     Interactions.interactions
   end

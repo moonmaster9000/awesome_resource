@@ -9,6 +9,12 @@ class ArticlesController < ApplicationController
     respond_with Article.find(params[:id])
   end
 
+  def update
+    respond_with(Article.find(params[:id]).tap do |article|
+      article.update_attributes params[:article]
+    end)
+  end
+
   def create
     respond_with Article.create(params[:article])
   end

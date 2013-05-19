@@ -21,11 +21,13 @@ module AwesomeResource
       end
     end
 
-    describe ".find" do
+    describe ".get" do
       context "when the server returns a 404" do
-        WebMock.stub_request(:get, 'www.example.com').to_return(
-          status: 404
-        )
+        before do
+          WebMock.stub_request(:get, 'www.example.com').to_return(
+            status: 404
+          )
+        end
 
         it "raises an AwesomeResource::NotFound exception" do
           expect {
@@ -33,6 +35,45 @@ module AwesomeResource
               "http://www.example.com"
             )
           }.to raise_exception(AwesomeResource::NotFound)
+        end
+      end
+    end
+
+    describe ".put" do
+      context "when the server returns a 204" do
+        before do
+          WebMock.stub_request(:put, 'www.example.com').to_return(
+            status: 204,
+            body: nil
+          )
+        end
+
+        it "should return the payload with the proper status code" do
+          Client.put(
+            location: "http://www.example.com",
+            body: {}
+          ).payload.should be_nil
+        end
+      end
+
+      context "when the server returns a 422" do
+        before do
+          WebMock.stub_request(:put, 'www.example.com').to_return(
+            status: 422,
+            body: '{"errors": "are bad"}'
+          )
+        end
+
+        it "should return the payload with the proper status code" do
+          Client.put(
+            location: "http://www.example.com",
+            body: {}
+          ).payload.should == {"errors" => "are bad"}
+
+          Client.put(
+            location: "http://www.example.com",
+            body: {}
+          ).response_code.should == 422
         end
       end
     end

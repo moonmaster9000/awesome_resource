@@ -7,11 +7,21 @@ module AwesomeResource
       super @attributes
     end
 
+    def accessor_for_method_name(method_name)
+      if method_name["="]
+        ->(attribute_value) { self[method_name[0...-1]] = attribute_value }
+      else
+        -> { self[method_name] }
+      end
+    end
+
     def [](key)
+      validate_key_exists(key)
       attributes[standardized_key(key)]
     end
 
     def []=(key, value)
+      validate_key_exists(key)
       attributes[standardized_key(key)] = value
     end
 
@@ -25,6 +35,10 @@ module AwesomeResource
 
     private
     attr_reader :attributes
+
+    def validate_key_exists(key)
+      raise "Unknown attribute '#{key}'" unless has_key? key
+    end
 
     def standardized_key(key)
       key.to_s

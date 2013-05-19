@@ -82,3 +82,21 @@ end
 Then(/^the find method should raise an AwesomeResource::NotFound exception$/) do
   @result.class.should == AwesomeResource::NotFound
 end
+
+When(/^I update the article:$/) do |code|
+  eval code
+end
+
+Then(/^AwesomeResource should PUT the following payload to "(.*)"$/) do |endpoint, payload|
+  puts.should include_interaction(
+    endpoint: endpoint,
+    request_body: payload
+  )
+end
+
+When(/^the server should return a (\d+) response to the PUT to "(.*)"$/) do |status_code, endpoint|
+  puts.should include_interaction(
+    endpoint: endpoint,
+    response_status: status_code
+  )
+end

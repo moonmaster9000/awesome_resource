@@ -14,8 +14,7 @@ module AwesomeResource
 
   module ClassMethods
     def create(attributes={})
-      response = AwesomeResource.client.post(location: collection_endpoint, body: { resource_name => attributes })
-      new(response.payload)
+      new(attributes).tap &:save
     end
 
     def find(id)
@@ -52,8 +51,11 @@ module AwesomeResource
     end
   end
 
+  attr_accessor :errors
+
   def initialize(attributes={})
     @attributes = AwesomeResource::Attributes.new(attributes)
+    @errors     = AwesomeResource::Attributes.new
   end
 
   def valid?
@@ -64,12 +66,9 @@ module AwesomeResource
     !valid?
   end
 
-  def method_missing(method_name, *args, &block)
-    if awesome_attributes.has_key?(method_name)
-      awesome_attributes[method_name]
-    else
-      super
-    end
+
+  def method_missing(method_name, *args)
+    awesome_attributes.accessor_for_method_name(method_name).call(*args)
   end
 
   def respond_to?(method_name)
@@ -84,6 +83,28 @@ module AwesomeResource
 
   def attributes
     @attributes.to_hash
+  end
+
+  def save
+    if awesome_attributes.has_key?(:id) &&
+      self.id
+      method = :put
+      endpoint = self.class.resource_endpoint(self.id)
+    else
+      method = :post
+      endpoint = self.class.collection_endpoint
+    end
+
+    response = AwesomeResource.client.send(method,
+      location: endpoint,
+      body: { self.class.resource_name => attributes }
+    )
+
+    if response.response_code == 201
+      @attributes = AwesomeResource::Attributes.new(response.payload)
+    elsif response.response_code == 422
+      self.errors = AwesomeResource::Attributes.new response.payload["errors"]
+    end
   end
 
   private
