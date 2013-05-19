@@ -13,13 +13,13 @@ module AwesomeResource
           response = RestClient.post(location, JSON.generate(body), "Content-Type" => "application/json")
 
           Response.new(
-            response_code: response.code,
-            payload: JSON.parse(response)
+            status: response.code,
+            body: JSON.parse(response)
           )
         rescue RestClient::Exception => e
           Response.new(
-            response_code: e.http_code,
-            payload: JSON.parse(e.http_body)
+            status: e.http_code,
+            body: JSON.parse(e.http_body)
           )
         end
       end
@@ -29,14 +29,14 @@ module AwesomeResource
           response = RestClient.put(location, JSON.generate(body), "Content-Type" => "application/json")
 
           Response.new(
-            response_code: response.code,
-            payload: response.blank? ? nil: JSON.parse(response)
+            status: response.code,
+            body: response.blank? ? nil: JSON.parse(response)
           )
 
         rescue RestClient::Exception => e
           Response.new(
-            response_code: e.http_code,
-            payload: JSON.parse(e.http_body)
+            status: e.http_code,
+            body: JSON.parse(e.http_body)
           )
         end
       end
@@ -46,8 +46,8 @@ module AwesomeResource
           response = RestClient.get(location, "Content-Type" => "application/json")
 
           Response.new(
-            response_code: response.code,
-            payload: JSON.parse(response)
+            status: response.code,
+            body: JSON.parse(response)
           )
 
         rescue RestClient::ResourceNotFound

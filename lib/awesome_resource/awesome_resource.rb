@@ -19,7 +19,7 @@ module AwesomeResource
 
     def find(id)
       response = AwesomeResource.client.get(resource_endpoint(id))
-      new(response.payload[resource_name])
+      new(response.body[resource_name])
     end
 
     def collection_endpoint
@@ -45,7 +45,7 @@ module AwesomeResource
     def all
       response = AwesomeResource.client.get(collection_endpoint)
 
-      response.payload[collection_name].map do |resource|
+      response.body[collection_name].map do |resource|
         new(resource)
       end
     end
@@ -100,10 +100,10 @@ module AwesomeResource
       body: { self.class.resource_name => attributes }
     )
 
-    if response.response_code == 201
-      @attributes = AwesomeResource::Attributes.new(response.payload)
-    elsif response.response_code == 422
-      self.errors = AwesomeResource::Attributes.new response.payload["errors"]
+    if response.status == 201
+      @attributes = AwesomeResource::Attributes.new(response.body)
+    elsif response.status == 422
+      self.errors = AwesomeResource::Attributes.new response.body["errors"]
     end
   end
 

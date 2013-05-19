@@ -16,7 +16,7 @@ module AwesomeResource
           Client.post(
             location: "http://www.example.com",
             body: {}
-          ).payload.should == {"errors" => {"foo" => ["bar"]}}
+          ).body.should == {"errors" => {"foo" => ["bar"]}}
         end
       end
     end
@@ -40,7 +40,7 @@ module AwesomeResource
     end
 
     describe ".put" do
-      context "when the server returns a 204" do
+      context "when the server returns a 204 with no body" do
         before do
           WebMock.stub_request(:put, 'www.example.com').to_return(
             status: 204,
@@ -48,11 +48,11 @@ module AwesomeResource
           )
         end
 
-        it "should return the payload with the proper status code" do
+        it "should return the body with the proper status code" do
           Client.put(
             location: "http://www.example.com",
             body: {}
-          ).payload.should be_nil
+          ).body.should be_nil
         end
       end
 
@@ -64,16 +64,14 @@ module AwesomeResource
           )
         end
 
-        it "should return the payload with the proper status code" do
-          Client.put(
+        it "should return the body with the proper status code" do
+          put = Client.put(
             location: "http://www.example.com",
             body: {}
-          ).payload.should == {"errors" => "are bad"}
+          )
 
-          Client.put(
-            location: "http://www.example.com",
-            body: {}
-          ).response_code.should == 422
+          put.body.should        == {"errors" => "are bad"}
+          put.status.should  == 422
         end
       end
     end

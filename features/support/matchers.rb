@@ -18,7 +18,7 @@ RSpec::Matchers.define :include_interaction do |expected_interaction|
       request_body = jsonify i[:request].body
 
       {
-        response_status: i[:response].status.code.to_s,
+        status: i[:response].status.code.to_s,
         response_body: response_body,
         request_body: request_body,
         endpoint: i[:request].uri.to_s

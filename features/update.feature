@@ -11,7 +11,7 @@ Feature: Update a resource
         article.save
       """
 
-    Then AwesomeResource should PUT the following payload to "http://localhost:3001/articles/1"
+    Then AwesomeResource should PUT the following body to "http://localhost:3001/articles/1"
       """
         {
           "article": {

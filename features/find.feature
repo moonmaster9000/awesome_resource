@@ -6,7 +6,7 @@ Feature: Finding a resource
 
     When I call `Article.find(1)`
 
-    And the server returns a 200 response with the following payload:
+    And the server returns a 200 response with the following body:
       """
         {
           "article": {

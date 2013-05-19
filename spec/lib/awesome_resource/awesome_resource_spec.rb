@@ -6,8 +6,8 @@ describe AwesomeResource do
     context "the client returns failures" do
       before do
         AwesomeResource.client.stub(:post).and_return AwesomeResource::Client::Response.new(
-          response_code: 422,
-          payload: {
+          status: 422,
+          body: {
             "errors" => {
               "title" => ["must be present."]
             }
@@ -37,8 +37,8 @@ describe AwesomeResource do
       context "the server responds to a PUT with a 204" do
         let(:response) do
           AwesomeResource::Client::Response.new(
-            response_code: 204,
-            payload: nil
+            status: 204,
+            body: nil
           )
         end
 
@@ -59,8 +59,8 @@ describe AwesomeResource do
       context "the server responds to a PUT with 422 failure" do
         let(:response) do
           AwesomeResource::Client::Response.new(
-            response_code: 422,
-            payload: {
+            status: 422,
+            body: {
               "errors" => {
                 "base" => "there was an error"
               }
@@ -93,8 +93,8 @@ describe AwesomeResource do
       context "the server responds with success" do
         let(:response) do
           AwesomeResource::Client::Response.new(
-            response_code: 201,
-            payload: {
+            status: 201,
+            body: {
               "id" => 1,
               "title" => "foo",
               "updated_at" => "now"
@@ -110,14 +110,14 @@ describe AwesomeResource do
 
           article.save
 
-          article.attributes.should == response.payload
+          article.attributes.should == response.body
         end
       end
       context "the server responds with a 422" do
         let(:response) do
           AwesomeResource::Client::Response.new(
-            response_code: 422,
-            payload: {
+            status: 422,
+            body: {
               "errors" =>  {
                 "foo" => "bar"
               }
@@ -137,7 +137,7 @@ describe AwesomeResource do
 
           article.attributes.should == original_attributes
 
-          article.errors.should == response.payload["errors"]
+          article.errors.should == response.body["errors"]
         end
       end
     end
@@ -149,17 +149,17 @@ describe AwesomeResource do
     before do
       AwesomeResource.client.stub(:get).and_return(
         AwesomeResource::Client::Response.new(
-          response_code: response_code,
-          payload: payload
+          status: status,
+          body: body
         )
       )
     end
 
-    context "the http client returns a 200 response with a payload" do
-      let(:response_code) { 200 }
-      let(:payload) do { "article" => { "title" => "foo" } } end
+    context "the http client returns a 200 response with a body" do
+      let(:status) { 200 }
+      let(:body) do { "article" => { "title" => "foo" } } end
 
-      it "returns an instance of the model with the payload's attributes" do
+      it "returns an instance of the model with the body's attributes" do
         should == { "title" => "foo" }
       end
     end

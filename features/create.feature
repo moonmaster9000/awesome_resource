@@ -59,7 +59,7 @@ Feature: Creating a resource
         }
       """
 
-    And the endpoint should respond with a 422 with the following payload:
+    And the endpoint should respond with a 422 with the following body:
       """
         {
           "errors": {

@@ -9,7 +9,7 @@ Then /^the Article model should successfully POST the following JSON to "([^"]*)
   posts.should include_interaction(
     endpoint: endpoint,
     request_body: json,
-    response_status: "201"
+    status: "201"
   )
 end
 
@@ -31,17 +31,17 @@ end
 When(/^the server requires article posts to contain a `title` attribute$/) do
 end
 
-Then(/^the Article model should POST the following JSON to "([^"]*)":$/) do |endpoint, payload|
+Then(/^the Article model should POST the following JSON to "([^"]*)":$/) do |endpoint, body|
   posts.should include_interaction(
     endpoint: endpoint,
-    request_body: payload
+    request_body: body
   )
 end
 
-When(/^the endpoint should respond with a (\d+) with the following payload:$/) do |response_code, payload|
+When(/^the endpoint should respond with a (\d+) with the following body:$/) do |status, body|
   posts.should include_interaction(
-    response_status: response_code,
-    response_body: payload
+    status: status,
+    response_body: body
   )
 end
 
@@ -61,10 +61,10 @@ When(/^I call \`(.*)`$/) do |code|
   end
 end
 
-When(/^the server returns a (\d+) response with the following payload:$/) do |status_code, payload|
+When(/^the server returns a (\d+) response with the following body:$/) do |status_code, body|
   gets.should include_interaction(
-    response_status: status_code,
-    response_body: payload
+    status: status_code,
+    response_body: body
   )
 end
 
@@ -74,7 +74,7 @@ end
 
 When(/^the server returns a (\d+) response from a GET request to "(.*)"$/) do |status, endpoint|
   gets.should include_interaction(
-    response_status: status,
+    status: status,
     endpoint: endpoint
   )
 end
@@ -87,16 +87,16 @@ When(/^I update the article:$/) do |code|
   eval code
 end
 
-Then(/^AwesomeResource should PUT the following payload to "(.*)"$/) do |endpoint, payload|
+Then(/^AwesomeResource should PUT the following body to "(.*)"$/) do |endpoint, body|
   puts.should include_interaction(
     endpoint: endpoint,
-    request_body: payload
+    request_body: body
   )
 end
 
 When(/^the server should return a (\d+) response to the PUT to "(.*)"$/) do |status_code, endpoint|
   puts.should include_interaction(
     endpoint: endpoint,
-    response_status: status_code
+    status: status_code
   )
 end
