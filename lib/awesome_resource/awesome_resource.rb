@@ -66,6 +66,9 @@ module AwesomeResource
     !valid?
   end
 
+  def destroy
+    AwesomeResource.client.delete(location: self.class.resource_endpoint(self.id)).status == 204
+  end
 
   def method_missing(method_name, *args)
     awesome_attributes.accessor_for_method_name(method_name).call(*args)

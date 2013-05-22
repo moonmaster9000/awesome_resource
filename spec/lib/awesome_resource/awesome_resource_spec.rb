@@ -2,6 +2,34 @@ require 'lib/awesome_resource/awesome_resource'
 require 'fixtures/models/article'
 
 describe AwesomeResource do
+  describe '#destroy' do
+    context "the client returns a 204 response" do
+      before do
+        AwesomeResource.client.should_receive(:delete).and_return AwesomeResource::Client::Response.new(
+          status: 204,
+          body: nil
+        )
+      end
+
+      it "should return true" do
+        Article.new(id: 1).destroy.should be_true
+      end
+    end
+
+    context "the client returns any other response" do
+      before do
+        AwesomeResource.client.should_receive(:delete).and_return AwesomeResource::Client::Response.new(
+          status: 401,
+          body: nil
+        )
+      end
+
+      it "should return false" do
+        Article.new(id: 1).destroy.should be_false
+      end
+    end
+  end
+
   describe '.create' do
     context "the client returns failures" do
       before do

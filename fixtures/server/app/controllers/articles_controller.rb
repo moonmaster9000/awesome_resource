@@ -15,6 +15,10 @@ class ArticlesController < ApplicationController
     end)
   end
 
+  def destroy
+    respond_with Article.find(params[:id]).tap(&:destroy)
+  end
+
   def create
     respond_with Article.create(params[:article])
   end

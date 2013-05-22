@@ -11,6 +11,10 @@ module Helpers
     interactions[:put] ||= []
   end
 
+  def deletes
+    interactions[:delete] ||= []
+  end
+
   def interactions
     Interactions.interactions
   end

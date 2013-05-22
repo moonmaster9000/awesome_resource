@@ -87,6 +87,10 @@ module AwesomeResource
         request method: :get, location: location
       end
 
+      def delete(location: location)
+        request method: :delete, location: location
+      end
+
       private
       def request(method: method, location: location, body: nil)
         begin

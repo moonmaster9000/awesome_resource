@@ -102,5 +102,22 @@ module AwesomeResource
         it_behaves_like "Unrecoverable Errors"
       end
     end
+
+    describe ".delete" do
+      context "the server responds with a 204" do
+        before do
+          WebMock.stub_request(:delete, "http://www.example.com").to_return(
+            status: 204,
+            body: nil
+          )
+        end
+
+        it "returns an empty body with a 204 status" do
+          response = Client.delete(location: "http://www.example.com")
+          response.status.should == 204
+          response.body.should be_nil
+        end
+      end
+    end
   end
 end

@@ -118,3 +118,24 @@ end
 
 Given(/^there are no articles on the server$/) do
 end
+
+When(/^I call the destroy method on this article instance:$/) do |code|
+  eval code
+end
+
+Then(/^AwesomeResource should send a DELETE request to "(.*)"$/) do |endpoint|
+  deletes.should include_interaction(
+    endpoint: endpoint
+  )
+end
+
+When(/^the server should return a (\d+) response to the DELETE to "(.*)"$/) do |status, endpoint|
+  deletes.should include_interaction(
+    endpoint: endpoint,
+    status: status
+  )
+end
+
+When(/^`Article.find\(1\)` should raise a ResourceNotFound exception$/) do
+  expect { Article.find(1) }.to raise_exception AwesomeResource::ResourceNotFound
+end
