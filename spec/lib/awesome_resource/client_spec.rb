@@ -5,9 +5,9 @@ module AwesomeResource
   describe Client do
     shared_examples_for "Unrecoverable Errors" do
       before do
-        WebMock.stub_request(method, 'www.example.com').to_return(
-          status: status,
-          body: nil
+        RestClient.stub(method).and_return double(
+          :response,
+          code: status
         )
       end
 
@@ -21,7 +21,7 @@ module AwesomeResource
         end.class
       }
 
-      AwesomeResource::EXCEPTION_CODES.keys.each do |code|
+      AwesomeResource::UNHANDLED_RESPONSES.keys.each do |code|
         context "#{code} error" do
           let(:status) { code }
 

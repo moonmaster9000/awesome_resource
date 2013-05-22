@@ -6,10 +6,25 @@ require "active_support/core_ext/string"
 module AwesomeResource
   class HttpException < StandardError; end
 
-  EXCEPTION_CODES = {
+  UNHANDLED_RESPONSES = {
     100 => 'Continue',
     101 => 'Switching Protocols',
     102 => 'Processing', #WebDAV
+
+    202 => 'Accepted',
+    203 => 'Non-Authoritative Information', # http/1.1
+    205 => 'Reset Content',
+    206 => 'Partial Content',
+    207 => 'Multi-Status', #WebDAV
+
+    300 => 'Multiple Choices',
+    301 => 'Moved Permanently',
+    302 => 'Found',
+    303 => 'See Other', # http/1.1
+    304 => 'Not Modified',
+    305 => 'Use Proxy', # http/1.1
+    306 => 'Switch Proxy', # no longer used
+    307 => 'Temporary Redirect', # http/1.1
 
     400 => 'Bad Request',
     401 => 'Unauthorized',
@@ -52,7 +67,7 @@ module AwesomeResource
 
   EXCEPTIONS = {}
 
-  EXCEPTION_CODES.each do |code, class_name|
+  UNHANDLED_RESPONSES.each do |code, class_name|
     klass = Class.new(HttpException)
     const_set class_name.gsub(" ", '').gsub("-", "").gsub("'", ""), klass
     EXCEPTIONS[code] = klass
@@ -81,10 +96,14 @@ module AwesomeResource
             response = RestClient.send(method, location, "Content-Type" => "application/json")
           end
 
-          Response.new(
-            status: response.code,
-            body: response.blank? ? nil: JSON.parse(response)
-          )
+          if UNHANDLED_RESPONSES[response.code]
+            raise EXCEPTIONS[response.code]
+          else
+            Response.new(
+              status: response.code,
+              body: response.blank? ? nil: JSON.parse(response)
+            )
+          end
 
         rescue RestClient::UnprocessableEntity => e
           Response.new(
