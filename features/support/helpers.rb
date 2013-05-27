@@ -16,7 +16,7 @@ module Helpers
   end
 
   def interactions
-    Interactions.interactions
+    @interactions ||= {}
   end
 
   def restart_server(port: 3001)
