@@ -1,7 +1,7 @@
 require 'awesome_resource/attributes'
 require 'awesome_resource/client'
 require "active_support/core_ext/string/inflections"
-require 'awesome_resource/configuration'
+require 'awesome_resource/configuration_database'
 require "json"
 
 module AwesomeResource
@@ -14,15 +14,15 @@ module AwesomeResource
   end
 
   def self.reset_config!
-    @configuration = nil
+    @configuration_database = nil
   end
 
   def self.config(&block)
-    configuration.instance_eval &block
+    configuration_database.instance_eval &block
   end
 
-  def self.configuration
-    @configuration ||= Configuration.new
+  def self.configuration_database
+    @configuration_database ||= ConfigurationDatabase.new
   end
 
   module ClassMethods
@@ -52,7 +52,7 @@ module AwesomeResource
     end
 
     def site
-      AwesomeResource.configuration.site
+      AwesomeResource.configuration_database.config_for(to_s).site
     end
 
     def all
