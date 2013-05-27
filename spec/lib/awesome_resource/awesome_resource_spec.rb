@@ -2,6 +2,24 @@ require 'lib/awesome_resource/awesome_resource'
 require 'fixtures/models/article'
 
 describe AwesomeResource do
+  describe ".collection_endpoint" do
+    before { AwesomeResource.reset_config! }
+
+    subject { Article.collection_endpoint }
+
+    context "when the configured site has been set with a trailing slash" do
+      before { AwesomeResource.config { site -> { "http://localhost:3001/"} } }
+
+      it { should == "http://localhost:3001/articles" }
+    end
+
+    context "when the configured site has NOT been set with a trailing slash" do
+      before { AwesomeResource.config { site -> { "http://localhost:3001"} } }
+
+      it { should == "http://localhost:3001/articles" }
+    end
+  end
+
   describe '#destroy' do
     context "the client returns a 204 response" do
       before do

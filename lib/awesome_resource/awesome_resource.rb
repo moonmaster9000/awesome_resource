@@ -1,6 +1,7 @@
 require 'awesome_resource/attributes'
 require 'awesome_resource/client'
 require "active_support/core_ext/string/inflections"
+require 'awesome_resource/configuration'
 require "json"
 
 module AwesomeResource
@@ -10,6 +11,18 @@ module AwesomeResource
 
   def self.client
     Client
+  end
+
+  def self.reset_config!
+    @configuration = nil
+  end
+
+  def self.config(&block)
+    configuration.instance_eval &block
+  end
+
+  def self.configuration
+    @configuration ||= Configuration.new
   end
 
   module ClassMethods
@@ -23,11 +36,11 @@ module AwesomeResource
     end
 
     def collection_endpoint
-      "#{site}#{collection_name}"
+      File.join(site, collection_name)
     end
 
     def resource_endpoint(id)
-      "#{collection_endpoint}/#{id}"
+      File.join(collection_endpoint, id.to_s)
     end
 
     def collection_name
@@ -39,7 +52,7 @@ module AwesomeResource
     end
 
     def site
-      "http://localhost:3001/"
+      AwesomeResource.configuration.site
     end
 
     def all

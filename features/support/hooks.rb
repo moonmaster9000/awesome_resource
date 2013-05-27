@@ -1,5 +1,4 @@
 Before do
   Interactions.reset!
-  stop_server
-  start_server
+  AwesomeResource.reset_config!
 end

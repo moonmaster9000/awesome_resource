@@ -1,4 +1,5 @@
-Given /^a rails site exists accepting posts at "([^"]*)"$/ do |endpoint|
+Given %r{^a rails site exists accepting posts at "http://localhost:3001/articles"$} do
+  restart_server(port: 3001)
 end
 
 When /^I call `create` on an Article model:$/ do |code|
@@ -138,4 +139,40 @@ end
 
 When(/^`Article.find\(1\)` should raise a ResourceNotFound exception$/) do
   expect { Article.find(1) }.to raise_exception AwesomeResource::ResourceNotFound
+end
+
+Given(/^I do not configure any sites for AwesomeResource to connect to$/) do
+end
+
+When(/^I attempt to create a resource:$/) do |code|
+  @result = begin
+    eval code
+  rescue Exception => e
+    e
+  end
+end
+
+Then(/^AwesomeResource should raise a SiteRequired exception$/) do
+  @result.class.should == AwesomeResource::SiteRequired
+end
+
+Given(/^a rails site exists at "http:\/\/localhost:3002\/"$/) do
+  restart_server(port: 3002)
+end
+
+Then(/^AwesomeResource should POST the following body to "(.*)"$/) do |url, body|
+  @result.class.ancestors.should_not include Exception
+
+  posts.should include_interaction(
+    endpoint: url,
+    request_body: body
+  )
+end
+
+When(/^I create a resource:$/) do |code|
+  eval code
+end
+
+When(/^I have configured AwesomeResource to post to that site:$/) do |code|
+  eval code
 end
