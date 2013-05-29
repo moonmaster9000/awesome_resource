@@ -176,3 +176,11 @@ end
 When(/^I have configured AwesomeResource to post to that site:$/) do |code|
   eval code
 end
+
+Given(/^I change the default 'Rails.env' environment lookup to the following:$/) do |code|
+  eval code
+end
+
+When(/^I configure a default site for AwesomeResource for different environments:$/) do |code|
+  eval code
+end

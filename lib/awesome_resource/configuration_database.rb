@@ -6,6 +6,10 @@ module AwesomeResource
       configurations["default"].send method_name, *args, &block
     end
 
+    def test(&block)
+      configurations["default"].test &block
+    end
+
     def config_for(model="default", &block)
       model = model.to_s
 

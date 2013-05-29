@@ -2,6 +2,26 @@ require 'lib/awesome_resource/awesome_resource'
 require 'fixtures/models/article'
 
 describe AwesomeResource do
+  before { AwesomeResource.reset_config! }
+
+  before do
+    AwesomeResource.config do
+      site -> { "http://localhost:3001" }
+    end
+  end
+
+  describe "#env, #env=" do
+    it "should honor environment lookup overrides" do
+      AwesomeResource.env = -> { "testing" }
+      AwesomeResource.env.should == "testing"
+    end
+
+    it "should default the environment to Rails.env.to_s" do
+      stub_const "Rails", double(:rails, env: :production)
+      AwesomeResource.env.should == "production"
+    end
+  end
+
   describe ".collection_endpoint" do
     before { AwesomeResource.reset_config! }
 

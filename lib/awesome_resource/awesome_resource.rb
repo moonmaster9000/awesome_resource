@@ -15,6 +15,19 @@ module AwesomeResource
 
   def self.reset_config!
     @configuration_database = nil
+    @env = nil
+  end
+
+  def self.env=(lazy_value)
+    @env = lazy_value
+  end
+
+  def self.env
+    if @env.respond_to?(:call)
+      @env.call
+    elsif defined?(Rails)
+      Rails.env.to_s
+    end
   end
 
   def self.config(&block)
