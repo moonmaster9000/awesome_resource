@@ -1,0 +1,29 @@
+PATH
+  remote: ../../vendor/rack-proxy
+  specs:
+    rack-proxy (0.3.7)
+      rack
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    daemons (1.1.9)
+    debase (0.0.4)
+    eventmachine (1.0.3)
+    rack (1.5.2)
+    rake (10.0.4)
+    ruby-debug-ide (0.4.17.beta17)
+      rake (>= 0.8.1)
+    thin (1.5.1)
+      daemons (>= 1.0.9)
+      eventmachine (>= 0.12.6)
+      rack (>= 1.0.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  debase
+  rack-proxy!
+  ruby-debug-ide
+  thin

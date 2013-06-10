@@ -4,7 +4,8 @@ require "json"
 require "active_support/core_ext/string"
 
 module AwesomeResource
-  class HttpException < StandardError; end
+  class HttpException < StandardError;
+  end
 
   UNHANDLED_RESPONSES = {
     100 => 'Continue',
@@ -74,50 +75,54 @@ module AwesomeResource
   end
 
   class Client
-    class << self
-      def post(location: location, body: body)
-        request method: :post, location: location, body: body
-      end
+    attr_reader :proxy
 
-      def put(location: location, body: body)
-        request method: :put, location: location, body: body
-      end
+    def initialize(proxy: nil)
+      @proxy = proxy
+    end
 
-      def get(location: location)
-        request method: :get, location: location
-      end
+    def post(location: location, body: body)
+      request method: :post, location: location, body: body
+    end
 
-      def delete(location: location)
-        request method: :delete, location: location
-      end
+    def put(location: location, body: body)
+      request method: :put, location: location, body: body
+    end
 
-      private
-      def request(method: method, location: location, body: nil)
-        begin
-          if body
-            response = RestClient.send(method, location, JSON.generate(body), "Content-Type" => "application/json")
-          else
-            response = RestClient.send(method, location, "Content-Type" => "application/json")
-          end
+    def get(location: location)
+      request method: :get, location: location
+    end
 
-          if UNHANDLED_RESPONSES[response.code]
-            raise EXCEPTIONS[response.code]
-          else
-            Response.new(
-              status: response.code,
-              body: response.blank? ? nil: JSON.parse(response)
-            )
-          end
+    def delete(location: location)
+      request method: :delete, location: location
+    end
 
-        rescue RestClient::UnprocessableEntity => e
-          Response.new(
-            status: e.http_code,
-            body: JSON.parse(e.http_body)
-          )
-
-        rescue RestClient::Exception => e
-          raise EXCEPTIONS[e.http_code]
+    private
+    def request(method: method, location: location, body: nil)
+      begin
+        if body
+          response = RestClient.send(method, location, JSON.generate(body), { "Content-Type" => "application/json" }, proxy)
+        else
+          response = RestClient.send(method, location, { "Content-Type" => "application/json" }, proxy)
         end
+
+        if UNHANDLED_RESPONSES[response.code]
+          raise EXCEPTIONS[response.code]
+        else
+          Response.new(
+            status: response.code,
+            body: response.blank? ? nil : JSON.parse(response)
+          )
+        end
+
+      rescue RestClient::UnprocessableEntity => e
+        Response.new(
+          status: e.http_code,
+          body: JSON.parse(e.http_body)
+        )
+
+      rescue RestClient::Exception => e
+        raise EXCEPTIONS[e.http_code]
       end
     end
   end

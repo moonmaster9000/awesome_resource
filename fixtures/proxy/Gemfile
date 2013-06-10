@@ -1,0 +1,6 @@
+source "https://rubygems.org"
+
+gem 'rack-proxy', path: '../../vendor/rack-proxy'
+gem 'ruby-debug-ide'
+gem 'debase'
+gem 'thin'

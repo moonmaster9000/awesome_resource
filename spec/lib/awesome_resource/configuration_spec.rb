@@ -2,12 +2,55 @@ require 'awesome_resource/configuration'
 
 module AwesomeResource
   describe Configuration do
+    let(:env) { "default" }
+    let(:config) { Configuration.new }
+
+    before { AwesomeResource.stub(:env).and_return env }
+
+    describe "#proxy" do
+      context "no proxy set" do
+        it "should be nil" do
+          config.proxy.should be_nil
+        end
+      end
+
+      context "proxy set with lambda" do
+        before do
+          config.proxy -> { "proxy!" }
+        end
+
+        it "should return the lambda's value" do
+          config.proxy.should == "proxy!"
+        end
+      end
+
+      context "proxy set in current environment" do
+        before do
+          config.send(env) do
+            proxy -> { "environment specific proxy!" }
+          end
+        end
+
+        it "should return the current environment's proxy" do
+          config.proxy.should == "environment specific proxy!"
+        end
+
+      end
+
+      context "proxy set in different environment" do
+        before do
+          config.some_other_environment do
+            proxy -> { "some other environment's proxy!" }
+          end
+        end
+
+        it "should be nil" do
+          config.proxy.should be_nil
+        end
+      end
+    end
+
     describe "#site" do
-      let(:env) { "default" }
-      let(:config) { Configuration.new }
-
-      before { AwesomeResource.stub(:env).and_return env }
-
       context "default site set with no environment specific override" do
         let(:env) { "production" }
 

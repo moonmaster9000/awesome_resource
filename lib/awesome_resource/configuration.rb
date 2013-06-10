@@ -16,19 +16,44 @@ module AwesomeResource
       if lazy_value
         @site[for_environment] = lazy_value
       else
-        if @site[current_environment].respond_to?(:call)
-          @site[current_environment].call
-        elsif @site["default"].respond_to?(:call)
-          @site["default"].call
-        else
-          raise SiteRequired
-        end
+        find_most_specific_site_for_current_environment
       end
     end
+    
+    def proxy(lazy_value=nil)
+      @proxy ||= {}
+      
+      if lazy_value
+        @proxy[for_environment] = lazy_value
+      else
+        find_most_specific_proxy_for_current_environment
+      end
+    end
+
 
     private
     attr_writer :for_environment
 
+    def find_most_specific_site_for_current_environment
+      if @site[current_environment].respond_to?(:call)
+        @site[current_environment].call
+      elsif @site["default"].respond_to?(:call)
+        @site["default"].call
+      else
+        raise SiteRequired
+      end
+    end
+
+    def find_most_specific_proxy_for_current_environment
+      if @proxy[current_environment].respond_to?(:call)
+        @proxy[current_environment].call
+      elsif @proxy["default"].respond_to?(:call)
+        @proxy["default"].call
+      else
+        nil
+      end
+    end
+    
     def configure_for_environment(environment, &block)
       self.for_environment = environment.to_s
       instance_eval &block
@@ -42,6 +67,5 @@ module AwesomeResource
     def for_environment
       @for_environment || "default"
     end
-
   end
 end

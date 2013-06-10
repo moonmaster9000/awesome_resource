@@ -43,7 +43,9 @@ describe AwesomeResource do
   describe '#destroy' do
     context "the client returns a 204 response" do
       before do
-        AwesomeResource.client.should_receive(:delete).and_return AwesomeResource::Client::Response.new(
+        client = double(:client)
+        Article.stub(:client).and_return client
+        client.should_receive(:delete).and_return AwesomeResource::Client::Response.new(
           status: 204,
           body: nil
         )
@@ -56,7 +58,9 @@ describe AwesomeResource do
 
     context "the client returns any other response" do
       before do
-        AwesomeResource.client.should_receive(:delete).and_return AwesomeResource::Client::Response.new(
+        client = double(:client)
+        Article.stub(:client).and_return client
+        client.should_receive(:delete).and_return AwesomeResource::Client::Response.new(
           status: 401,
           body: nil
         )
@@ -71,7 +75,9 @@ describe AwesomeResource do
   describe '.create' do
     context "the client returns failures" do
       before do
-        AwesomeResource.client.stub(:post).and_return AwesomeResource::Client::Response.new(
+        client = double(:client)
+        Article.stub(:client).and_return client
+        client.stub(:post).and_return AwesomeResource::Client::Response.new(
           status: 422,
           body: {
             "errors" => {
@@ -109,7 +115,9 @@ describe AwesomeResource do
         end
 
         it "PUTs the attributes to the resource" do
-          AwesomeResource.client.should_receive(:put).with(hash_including(
+          client = double(:client)
+          Article.stub(:client).and_return client
+          client.should_receive(:put).with(hash_including(
             location: "http://localhost:3001/articles/1",
             body: { "article" => article.attributes }
           )).and_return(response)
@@ -135,7 +143,9 @@ describe AwesomeResource do
         end
 
         it "PUTs the attributes to the resource and captures the errors" do
-          AwesomeResource.client.should_receive(:put).with(hash_including(
+          client = double(:client)
+          Article.stub(:client).and_return client
+          client.should_receive(:put).with(hash_including(
             location: "http://localhost:3001/articles/1",
             body: { "article" => article.attributes }
           )).and_return(response)
@@ -169,7 +179,9 @@ describe AwesomeResource do
         end
 
         it "should POST the attributes to the server" do
-          AwesomeResource.client.should_receive(:post).with(hash_including(
+          client = double(:client)
+          Article.stub(:client).and_return client
+          client.should_receive(:post).with(hash_including(
             location: "http://localhost:3001/articles",
             body: { "article" => article.attributes }
           )).and_return(response)
@@ -192,7 +204,9 @@ describe AwesomeResource do
         end
 
         it "should POST the attributes to the server" do
-          AwesomeResource.client.should_receive(:post).with(hash_including(
+          client = double(:client)
+          Article.stub(:client).and_return client
+          client.should_receive(:post).with(hash_including(
             location: "http://localhost:3001/articles",
             body: { "article" => article.attributes }
           )).and_return(response)
@@ -213,7 +227,9 @@ describe AwesomeResource do
     subject { Article.find(1).attributes }
 
     before do
-      AwesomeResource.client.stub(:get).and_return(
+      client = double(:client)
+      Article.stub(:client).and_return client
+      client.stub(:get).and_return(
         AwesomeResource::Client::Response.new(
           status: status,
           body: body

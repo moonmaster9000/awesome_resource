@@ -148,6 +148,7 @@ When(/^I attempt to create a resource:$/) do |code|
   @result = begin
     eval code
   rescue Exception => e
+    Kernel.puts "Exception captured after attempting to create a resource: #{e.inspect}"
     e
   end
 end
@@ -183,4 +184,31 @@ end
 
 When(/^I configure a default site for AwesomeResource for different environments:$/) do |code|
   eval code
+end
+
+When(/^I have configured AwesomeResource to post to that site$/) do
+  AwesomeResource.config do
+    site -> { "http://localhost:3001" }
+  end
+end
+
+Given(%r{^a proxy is running at "http://localhost:4000" requiring username "(.*?)" and password "(.*?)"$}) do |user, password|
+  restart_proxy(port: 4000, user: user, password: password)
+end
+
+Given(/^I have configured AwesomeResource to use that proxy:$/) do |code|
+  eval code
+end
+
+Then(/^the server should receive the POST via the proxy$/) do
+  posts.should include_interaction(
+    endpoint: "http://localhost:3001/articles",
+    request_body: %[
+      {
+        "article": {
+          "title": "foo"
+        }
+      }
+    ]
+  )
 end

@@ -9,8 +9,8 @@ module AwesomeResource
     base.extend ClassMethods
   end
 
-  def self.client
-    Client
+  def self.client(model)
+    Client.new(proxy: model.config.proxy)
   end
 
   def self.reset_config!
@@ -44,8 +44,12 @@ module AwesomeResource
     end
 
     def find(id)
-      response = AwesomeResource.client.get(location: resource_endpoint(id))
+      response = client.get(location: resource_endpoint(id))
       new(response.body[resource_name])
+    end
+
+    def client
+      AwesomeResource.client(self)
     end
 
     def collection_endpoint
@@ -65,11 +69,15 @@ module AwesomeResource
     end
 
     def site
-      AwesomeResource.configuration_database.config_for(to_s).site
+      config.site
+    end
+
+    def config
+      AwesomeResource.configuration_database.config_for(to_s)
     end
 
     def all
-      response = AwesomeResource.client.get(location: collection_endpoint)
+      response = client.get(location: collection_endpoint)
 
       response.body[collection_name].map do |resource|
         new(resource)
@@ -93,7 +101,7 @@ module AwesomeResource
   end
 
   def destroy
-    AwesomeResource.client.delete(location: self.class.resource_endpoint(self.id)).status == 204
+    client.delete(location: self.class.resource_endpoint(self.id)).status == 204
   end
 
   def method_missing(method_name, *args)
@@ -124,7 +132,7 @@ module AwesomeResource
       endpoint = self.class.collection_endpoint
     end
 
-    response = AwesomeResource.client.send(method,
+    response = client.send(method,
       location: endpoint,
       body: { self.class.resource_name => attributes }
     )
@@ -139,5 +147,9 @@ module AwesomeResource
   private
   def awesome_attributes
     @attributes
+  end
+
+  def client
+    self.class.client
   end
 end

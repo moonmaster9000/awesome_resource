@@ -1,0 +1,6 @@
+[submodule "vendor/rack-proxy"]
+	path = vendor/rack-proxy
+	url = git://github.com/moonmaster9000/rack-proxy.git
+[submodule "vendor/rest-client"]
+	path = vendor/rest-client
+	url = git://github.com/moonmaster9000/rest-client.git

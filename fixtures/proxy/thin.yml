@@ -1,0 +1,4 @@
+---
+pid: thin.pid
+log: thin.log
+daemonize: true

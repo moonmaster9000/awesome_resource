@@ -1,2 +1,3 @@
 *.idea
 fixtures/cassettes/*.yml
+.DS_Store
