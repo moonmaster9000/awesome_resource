@@ -36,7 +36,7 @@ module Helpers
 
   def stop_server
     Bundler.with_clean_env do
-      system "RAILS_ENV=development cd fixtures/server && bundle && bundle exec thin stop -C config/thin.yml"
+      system "RAILS_ENV=development cd fixtures/server && kill -9 `cat tmp/pids/thin.pid`"
     end
   end
 
