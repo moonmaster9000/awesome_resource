@@ -10,6 +10,7 @@ Feature: Update a resource
       end
     """
 
+  @reset-server-ids
   Scenario: Resource pre-existing
 
     Given an article resource exists at "http://localhost:3001/articles/1"

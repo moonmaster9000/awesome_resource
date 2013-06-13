@@ -2,7 +2,7 @@ Feature: Environment-Specific Configuration
 
   Scenario: Environment specific site configuration
 
-    Given a rails site exists at "http://localhost:3002/"
+    Given a rails site exists at "http://localhost:3001/"
 
     Given I change the default 'Rails.env' environment lookup to the following:
     """
@@ -13,11 +13,11 @@ Feature: Environment-Specific Configuration
     """
       AwesomeResource.config do
         production do
-          site -> { "http://localhost:3002" }
+          site -> { "http://localhost:3001" }
         end
 
         test do
-          site -> { "http://localhost:3001" }
+          site -> { "http://localhost:3002" }
         end
       end
     """
@@ -27,7 +27,7 @@ Feature: Environment-Specific Configuration
       Article.create(title: "production article")
     """
 
-    Then AwesomeResource should POST the following body to "http://localhost:3002/articles"
+    Then AwesomeResource should POST the following body to "http://localhost:3001/articles"
     """
       {
         "article": {

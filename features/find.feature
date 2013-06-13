@@ -10,6 +10,7 @@ Feature: Finding a resource
       end
     """
 
+  @reset-server-ids
   Scenario: Resource exists on Server
 
     Given an article resource exists at "http://localhost:3001/articles/1"

@@ -12,12 +12,12 @@ Feature: Configure Site
 
 
   Scenario: Site set
-    Given a rails site exists at "http://localhost:3002/"
+    Given a rails site exists at "http://localhost:3001/"
 
     And I have configured AwesomeResource to post to that site:
     """
       AwesomeResource.config do
-        site -> { "http://localhost:3002" }
+        site -> { "http://localhost:3001" }
       end
     """
 
@@ -26,7 +26,7 @@ Feature: Configure Site
       Article.create(title: "foo")
     """
 
-    Then AwesomeResource should POST the following body to "http://localhost:3002/articles"
+    Then AwesomeResource should POST the following body to "http://localhost:3001/articles"
     """
       {
         "article": {

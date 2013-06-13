@@ -10,6 +10,7 @@ Feature: Deleting a resource
       end
     """
 
+  @reset-server-ids
   Scenario: Server responds with 204 OK
 
     Given an article resource exists at "http://localhost:3001/articles/1"

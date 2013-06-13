@@ -10,6 +10,7 @@ Feature: Creating a resource
       end
     """
 
+  @reset-server-ids
   Scenario: Endpoint responds with 201
     When I call `create` on an Article model:
     """

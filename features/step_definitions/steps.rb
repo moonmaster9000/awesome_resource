@@ -1,5 +1,4 @@
 Given %r{^a rails site exists accepting posts at "http://localhost:3001/articles"$} do
-  restart_server(port: 3001)
 end
 
 When /^I call `create` on an Article model:$/ do |code|
@@ -157,10 +156,6 @@ Then(/^AwesomeResource should raise a SiteRequired exception$/) do
   @result.class.should == AwesomeResource::SiteRequired
 end
 
-Given(/^a rails site exists at "http:\/\/localhost:3002\/"$/) do
-  restart_server(port: 3002)
-end
-
 Then(/^AwesomeResource should POST the following body to "(.*)"$/) do |url, body|
   @result.class.ancestors.should_not include Exception
 
@@ -211,4 +206,7 @@ Then(/^the server should receive the POST via the proxy$/) do
       }
     ]
   )
+end
+
+Given(/^a rails site exists at ".*"$/) do
 end
