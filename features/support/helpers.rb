@@ -30,7 +30,7 @@ module Helpers
     return if (TCPSocket.new('localhost', port) rescue false)
 
     Bundler.with_clean_env do
-      raise "couldn't start server" unless system "RAILS_ENV=development cd fixtures/server && rake db:reset && bundle exec thin start -C config/thin.yml -p #{port}"
+      raise "couldn't start server" unless system "RAILS_ENV=development cd fixtures/server && bundle exec rake db:reset && bundle exec thin start -C config/thin.yml -p #{port}"
     end
 
     eventually { TCPSocket.new 'localhost', port }
